@@ -5,18 +5,34 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "eslint ./**/*.{js,json}",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --write './**/*.{js,json}'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "eslintIgnore": [
+    "node_modules",
+    ".eslintrc.json",
+    "package.json",
+    "package-lock.json"
+  ],
   "dependencies": {
-    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
     "md5": "^2.3.0",
     "mongodb": "^4.13.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.4"
   }
 }

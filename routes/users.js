@@ -1,8 +1,9 @@
 const express = require("express");
-const userRoutes = express.Router();
-const dbo = require("../db/conn");;
 
-userRoutes.route("/users/:email").get(async function (req, res) {
+const userRoutes = express.Router();
+const dbo = require("../db/conn");
+
+userRoutes.route("/users/:email").get(async (req, res) => {
   const db_connect = dbo.getDb("fast_burger");
   const userEmail = req.params.email;
 
@@ -13,7 +14,14 @@ userRoutes.route("/users/:email").get(async function (req, res) {
 
     if (user) {
       const { _id, name, email, role, address, telephone } = user;
-      res.json({ _id, name, email, role, address, telephone });
+      res.json({
+        _id,
+        name,
+        email,
+        role,
+        address,
+        telephone,
+      });
     } else {
       res.status(404).json({ error: "User not found" });
     }
@@ -23,7 +31,7 @@ userRoutes.route("/users/:email").get(async function (req, res) {
   }
 });
 
-userRoutes.route("/login").post(async function (req, res) {
+userRoutes.route("/login").post(async (req, res) => {
   const db_connect = dbo.getDb("fast_burger");
   const { email, hashedPassword } = req.body;
 
@@ -32,7 +40,14 @@ userRoutes.route("/login").post(async function (req, res) {
 
     if (user && user.password === hashedPassword) {
       const { _id, name, email, role, address, telephone } = user;
-      res.json({ _id, name, email, role, address, telephone });
+      res.json({
+        _id,
+        name,
+        email,
+        role,
+        address,
+        telephone,
+      });
     } else {
       res.status(401).json({ error: "Invalid credentials" });
     }

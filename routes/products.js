@@ -1,9 +1,10 @@
 const express = require("express");
-const productRoutes = express.Router();
-const dbo = require("../db/conn");
-const ObjectId = require("mongodb").ObjectId;
 
-productRoutes.route("/products").get(function (req, res) {
+const productRoutes = express.Router();
+const { ObjectId } = require("mongodb");
+const dbo = require("../db/conn");
+
+productRoutes.route("/products").get((req, res) => {
   // if index type is text;
   // productRoutes.route("/products/search/:name").get(function(req, res) {
   //     let db_connect = dbo.getDb("fast_burger");
@@ -15,10 +16,10 @@ productRoutes.route("/products").get(function (req, res) {
   //             res.json(result);
   //         });
   // });
-  let db_connect = dbo.getDb("fast_burger");
+  const db_connect = dbo.getDb("fast_burger");
 
   const { searchTerm, sortOption, filterOption } = req.query;
-  let query = {};
+  const query = {};
 
   if (searchTerm) {
     query.name = { $regex: searchTerm, $options: "i" };
@@ -28,7 +29,7 @@ productRoutes.route("/products").get(function (req, res) {
     query.type = filterOption;
   }
 
-  let sortQuery = {};
+  const sortQuery = {};
   if (sortOption) {
     if (sortOption === "name" || sortOption === "price") {
       sortQuery[sortOption] = 1;
@@ -39,35 +40,33 @@ productRoutes.route("/products").get(function (req, res) {
     .collection("products_list")
     .find(query)
     .sort(sortQuery)
-    .toArray(function (err, result) {
+    .toArray((err, result) => {
       if (err) throw err;
       res.json(result);
     });
 });
 
-productRoutes
-  .route("/modifications/:productType")
-  .get(async function (req, res) {
-    const db_connect = dbo.getDb("fast_burger");
-    const productType = req.params.productType;
+productRoutes.route("/modifications/:productType").get(async (req, res) => {
+  const db_connect = dbo.getDb("fast_burger");
+  const { productType } = req.params;
 
-    try {
-      const modifications = await db_connect
-        .collection("modifications")
-        .findOne();
+  try {
+    const modifications = await db_connect
+      .collection("modifications")
+      .findOne();
 
-      if (modifications && modifications[productType]) {
-        res.json({ productType, modifications: modifications[productType] });
-      } else {
-        res.json({ productType, modifications: [] });
-      }
-    } catch (err) {
-      console.error("Error fetching modifications:", err);
-      res.status(500).send("Internal Server Error");
+    if (modifications && modifications[productType]) {
+      res.json({ productType, modifications: modifications[productType] });
+    } else {
+      res.json({ productType, modifications: [] });
     }
-  });
+  } catch (err) {
+    console.error("Error fetching modifications:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
-productRoutes.route("/types").get(async function (req, res) {
+productRoutes.route("/types").get(async (req, res) => {
   const db_connect = dbo.getDb("fast_burger");
 
   try {
@@ -87,9 +86,9 @@ productRoutes.route("/types").get(async function (req, res) {
   }
 });
 
-productRoutes.route("/products/:productId").put(async function (req, res) {
+productRoutes.route("/products/:productId").put(async (req, res) => {
   const db_connect = dbo.getDb("fast_burger");
-  const productId = req.params.productId;
+  const { productId } = req.params;
   const { name, price, type } = req.body;
 
   try {
@@ -97,11 +96,11 @@ productRoutes.route("/products/:productId").put(async function (req, res) {
       { _id: ObjectId(productId) },
       {
         $set: {
-          name: name,
-          price: price,
-          type: type
+          name,
+          price,
+          type,
         },
-      }
+      },
     );
 
     if (result.modifiedCount === 1) {
