@@ -87,4 +87,32 @@ productRoutes.route("/types").get(async function (req, res) {
   }
 });
 
+productRoutes.route("/products/:productId").put(async function (req, res) {
+  const db_connect = dbo.getDb("fast_burger");
+  const productId = req.params.productId;
+  const { name, price, type } = req.body;
+
+  try {
+    const result = await db_connect.collection("products_list").updateOne(
+      { _id: ObjectId(productId) },
+      {
+        $set: {
+          name: name,
+          price: price,
+          type: type
+        },
+      }
+    );
+
+    if (result.modifiedCount === 1) {
+      res.json({ message: "Product updated successfully" });
+    } else {
+      res.status(404).json({ error: "Product not found" });
+    }
+  } catch (err) {
+    console.error("Error updating product:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 module.exports = productRoutes;

@@ -7,6 +7,7 @@ app.use(cors());
 app.use(express.json());
 app.use(require("./routes/products"));
 app.use(require("./routes/users"));
+app.use(require("./routes/orders"));
 
 const dbo = require("./db/conn");
 
